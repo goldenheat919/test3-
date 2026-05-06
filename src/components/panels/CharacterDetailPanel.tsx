@@ -213,7 +213,6 @@ const CharacterDetailPanel = memo(function CharacterDetailPanel({
                 </div>
               )}
 
-              {!isStatic && (
               <div className="flex gap-2 mb-4">
                 <button
                   onClick={() => setIsEditing(true)}
@@ -244,7 +243,6 @@ const CharacterDetailPanel = memo(function CharacterDetailPanel({
                   🗑️ 删除
                 </button>
               </div>
-              )}
 
               <div>
                 <div className="text-[10px] text-ink-muted font-bold mb-2 tracking-wider uppercase">人物关系</div>
