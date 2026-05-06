@@ -1,0 +1,154 @@
+@import url('https://fonts.googleapis.com/css2?family=ZCOOL+QingKe+HuangYou&family=Long+Cang&family=ZCOOL+XiaoWei&family=LXGW+WenKai+TC&family=Ma+Shan+Zheng&family=Noto+Serif+SC:wght@400;600;700;900&display=swap');
+@import "tailwindcss";
+@import "@xyflow/react/dist/style.css";
+
+@theme {
+  --color-parchment: #f0dbb8;
+  --color-parchment-dark: #d9c49a;
+  --color-parchment-deep: #c4a878;
+  --color-parchment-warm: #e8d0a8;
+
+  --color-ink: #1a0e08;
+  --color-ink-light: #4a2e1a;
+  --color-ink-muted: #7a5a3a;
+  --color-ink-faint: #a08060;
+
+  --color-azure: #1565c0;
+  --color-azure-light: #42a5f5;
+  --color-azure-dark: #0d3b6e;
+  --color-azure-accent: #1e88e5;
+
+  --color-crimson: #c2185b;
+  --color-crimson-light: #f06292;
+  --color-crimson-dark: #880e4f;
+  --color-crimson-accent: #e91e63;
+
+  --color-gold: #d4a017;
+  --color-gold-light: #f0c040;
+  --color-gold-dark: #8b5e00;
+  --color-gold-accent: #b8860b;
+
+  --color-jade: #1a6b4a;
+  --color-jade-light: #27ae60;
+  --color-wood: #5c3a1e;
+  --color-wood-light: #8b5e3c;
+  --color-wood-dark: #3a2010;
+  --color-bamboo: #558b2f;
+  --color-cloud: rgba(240, 219, 184, 0.6);
+
+  --font-family-serif: "LXGW WenKai TC", "ZCOOL XiaoWei", "Noto Serif SC", "SimSun", "STSong", serif;
+  --font-family-brush: "Ma Shan Zheng", "Long Cang", "ZCOOL XiaoWei", "STXingkai", "KaiTi", cursive;
+
+  --shadow-panel: 0 8px 32px rgba(26, 14, 8, 0.18), 0 2px 8px rgba(26, 14, 8, 0.08);
+  --shadow-panel-hover: 0 12px 40px rgba(26, 14, 8, 0.22), 0 4px 12px rgba(26, 14, 8, 0.1);
+  --shadow-node: 0 2px 8px rgba(26, 14, 8, 0.12), 0 1px 3px rgba(26, 14, 8, 0.08);
+  --shadow-node-selected: 0 0 0 2px rgba(212, 160, 23, 0.4), 0 4px 16px rgba(26, 14, 8, 0.2);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-family-serif);
+  background-color: var(--color-parchment);
+  color: var(--color-ink);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#root {
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.react-flow__background {
+  background-color: var(--color-parchment) !important;
+  background-image:
+    radial-gradient(ellipse at 20% 50%, rgba(212, 160, 23, 0.04) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 20%, rgba(139, 94, 0, 0.03) 0%, transparent 40%),
+    radial-gradient(ellipse at 50% 80%, rgba(90, 66, 0, 0.02) 0%, transparent 60%) !important;
+}
+
+.react-flow__minimap {
+  background-color: var(--color-parchment-dark) !important;
+  border: 1px solid var(--color-gold-dark) !important;
+  border-radius: 6px !important;
+  box-shadow: var(--shadow-panel) !important;
+}
+
+.react-flow__controls {
+  border: 1px solid var(--color-gold-dark) !important;
+  border-radius: 6px !important;
+  overflow: hidden;
+  box-shadow: var(--shadow-node) !important;
+}
+
+.react-flow__controls-button {
+  background-color: var(--color-parchment) !important;
+  border-bottom: 1px solid rgba(139, 94, 0, 0.2) !important;
+  fill: var(--color-ink-light) !important;
+  transition: all 0.15s ease;
+}
+
+.react-flow__controls-button:hover {
+  background-color: var(--color-parchment-dark) !important;
+  fill: var(--color-ink) !important;
+}
+
+.react-flow__edge-path {
+  stroke-width: 2;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-gold-dark);
+  border-radius: 3px;
+  opacity: 0.6;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-gold);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideInRight {
+  from { opacity: 0; transform: translateX(12px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.96); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes pulse-gold {
+  0%, 100% { box-shadow: 0 0 4px rgba(212, 160, 23, 0.2); }
+  50% { box-shadow: 0 0 12px rgba(212, 160, 23, 0.45); }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.animate-slide-in {
+  animation: slideInRight 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.animate-scale-in {
+  animation: scaleIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
