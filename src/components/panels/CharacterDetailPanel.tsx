@@ -10,6 +10,7 @@ interface CharacterDetailPanelProps {
   onDelete: (id: string) => void;
   onDeleteRelation: (relationId: string) => void;
   onUpdateRelationLabel: (relationId: string, customLabel: string) => void;
+  isStatic?: boolean;
 }
 
 const CharacterDetailPanel = memo(function CharacterDetailPanel({
@@ -21,6 +22,7 @@ const CharacterDetailPanel = memo(function CharacterDetailPanel({
   onDelete,
   onDeleteRelation,
   onUpdateRelationLabel,
+  isStatic,
 }: CharacterDetailPanelProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [editData, setEditData] = useState({ ...character });
@@ -211,6 +213,7 @@ const CharacterDetailPanel = memo(function CharacterDetailPanel({
                 </div>
               )}
 
+              {!isStatic && (
               <div className="flex gap-2 mb-4">
                 <button
                   onClick={() => setIsEditing(true)}
@@ -241,6 +244,7 @@ const CharacterDetailPanel = memo(function CharacterDetailPanel({
                   🗑️ 删除
                 </button>
               </div>
+              )}
 
               <div>
                 <div className="text-[10px] text-ink-muted font-bold mb-2 tracking-wider uppercase">人物关系</div>

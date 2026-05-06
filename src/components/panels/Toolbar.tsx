@@ -17,6 +17,7 @@ interface ToolbarProps {
   pinnedCount: number;
   isAuthenticated: boolean;
   characters: Character[];
+  isStatic?: boolean;
 }
 
 const Toolbar = memo(function Toolbar({
@@ -35,6 +36,7 @@ const Toolbar = memo(function Toolbar({
   pinnedCount,
   isAuthenticated,
   characters,
+  isStatic,
 }: ToolbarProps) {
   const [showSearch, setShowSearch] = useState(false);
 
@@ -209,62 +211,70 @@ const Toolbar = memo(function Toolbar({
             )}
           </>
         )}
-        <button
-          onClick={onAddCharacter}
-          className="px-4 py-2.5 rounded-md text-[12px] font-bold tracking-wide text-center
-                     transition-all duration-150 hover:shadow-md"
-          style={{
-            fontFamily: 'var(--font-family-serif)',
-            color: isAuthenticated ? '#2e7d32' : '#6b4f1d',
-            background: isAuthenticated ? 'rgba(46, 125, 50, 0.08)' : 'rgba(184, 134, 11, 0.08)',
-            border: isAuthenticated ? '1px solid rgba(46, 125, 50, 0.22)' : '1px solid rgba(184, 134, 11, 0.22)',
-            boxShadow: '0 1px 6px rgba(26, 14, 8, 0.06)',
-          }}
-        >
-          {isAuthenticated ? '🔓 添加角色' : '🔒 添加角色'}
-        </button>
-        <button
-          onClick={onImportData}
-          className="px-4 py-2.5 rounded-md text-[12px] font-bold tracking-wide text-center
-                     transition-all duration-150 hover:shadow-md"
-          style={{
-            fontFamily: 'var(--font-family-serif)',
-            color: '#6b4f1d',
-            background: 'rgba(184, 134, 11, 0.08)',
-            border: '1px solid rgba(184, 134, 11, 0.22)',
-            boxShadow: '0 1px 6px rgba(26, 14, 8, 0.06)',
-          }}
-        >
-          📂 导入数据
-        </button>
-        <button
-          onClick={onExportData}
-          className="px-4 py-2.5 rounded-md text-[12px] font-bold tracking-wide text-center
-                     transition-all duration-150 hover:shadow-md"
-          style={{
-            fontFamily: 'var(--font-family-serif)',
-            color: '#6b4f1d',
-            background: 'rgba(184, 134, 11, 0.08)',
-            border: '1px solid rgba(184, 134, 11, 0.22)',
-            boxShadow: '0 1px 6px rgba(26, 14, 8, 0.06)',
-          }}
-        >
-          💾 导出数据
-        </button>
-        <button
-          onClick={onAddRelation}
-          className="px-4 py-2.5 rounded-md text-[12px] font-bold tracking-wide text-center
-                     transition-all duration-150 hover:shadow-md"
-          style={{
-            fontFamily: 'var(--font-family-serif)',
-            color: '#880e4f',
-            background: 'rgba(194, 24, 91, 0.05)',
-            border: '1px solid rgba(194, 24, 91, 0.18)',
-            boxShadow: '0 1px 6px rgba(26, 14, 8, 0.06)',
-          }}
-        >
-          🔗 添加关系
-        </button>
+        {!isStatic && (
+          <button
+            onClick={onAddCharacter}
+            className="px-4 py-2.5 rounded-md text-[12px] font-bold tracking-wide text-center
+                       transition-all duration-150 hover:shadow-md"
+            style={{
+              fontFamily: 'var(--font-family-serif)',
+              color: isAuthenticated ? '#2e7d32' : '#6b4f1d',
+              background: isAuthenticated ? 'rgba(46, 125, 50, 0.08)' : 'rgba(184, 134, 11, 0.08)',
+              border: isAuthenticated ? '1px solid rgba(46, 125, 50, 0.22)' : '1px solid rgba(184, 134, 11, 0.22)',
+              boxShadow: '0 1px 6px rgba(26, 14, 8, 0.06)',
+            }}
+          >
+            {isAuthenticated ? '🔓 添加角色' : '🔒 添加角色'}
+          </button>
+        )}
+        {!isStatic && (
+          <button
+            onClick={onImportData}
+            className="px-4 py-2.5 rounded-md text-[12px] font-bold tracking-wide text-center
+                       transition-all duration-150 hover:shadow-md"
+            style={{
+              fontFamily: 'var(--font-family-serif)',
+              color: '#6b4f1d',
+              background: 'rgba(184, 134, 11, 0.08)',
+              border: '1px solid rgba(184, 134, 11, 0.22)',
+              boxShadow: '0 1px 6px rgba(26, 14, 8, 0.06)',
+            }}
+          >
+            📂 导入数据
+          </button>
+        )}
+        {!isStatic && (
+          <button
+            onClick={onExportData}
+            className="px-4 py-2.5 rounded-md text-[12px] font-bold tracking-wide text-center
+                       transition-all duration-150 hover:shadow-md"
+            style={{
+              fontFamily: 'var(--font-family-serif)',
+              color: '#6b4f1d',
+              background: 'rgba(184, 134, 11, 0.08)',
+              border: '1px solid rgba(184, 134, 11, 0.22)',
+              boxShadow: '0 1px 6px rgba(26, 14, 8, 0.06)',
+            }}
+          >
+            💾 导出数据
+          </button>
+        )}
+        {!isStatic && (
+          <button
+            onClick={onAddRelation}
+            className="px-4 py-2.5 rounded-md text-[12px] font-bold tracking-wide text-center
+                       transition-all duration-150 hover:shadow-md"
+            style={{
+              fontFamily: 'var(--font-family-serif)',
+              color: '#880e4f',
+              background: 'rgba(194, 24, 91, 0.05)',
+              border: '1px solid rgba(194, 24, 91, 0.18)',
+              boxShadow: '0 1px 6px rgba(26, 14, 8, 0.06)',
+            }}
+          >
+            🔗 添加关系
+          </button>
+        )}
         <button
           onClick={onResetLayout}
           className={`px-4 py-2.5 rounded-md text-[12px] font-bold tracking-wide text-center
@@ -283,18 +293,20 @@ const Toolbar = memo(function Toolbar({
         >
           🔄 重置布局{pinnedCount > 0 ? ` (${pinnedCount})` : ''}
         </button>
-        <button
-          onClick={onResetData}
-          className="px-4 py-2.5 rounded-md text-[12px] text-ink-muted font-bold tracking-wide text-center
-                     transition-all duration-150 hover:text-ink-light hover:shadow-md"
-          style={{
-            fontFamily: 'var(--font-family-serif)',
-            background: 'rgba(240, 219, 184, 0.45)',
-            border: '1px solid rgba(139, 94, 0, 0.08)',
-          }}
-        >
-          🗑️ 重置数据
-        </button>
+        {!isStatic && (
+          <button
+            onClick={onResetData}
+            className="px-4 py-2.5 rounded-md text-[12px] text-ink-muted font-bold tracking-wide text-center
+                       transition-all duration-150 hover:text-ink-light hover:shadow-md"
+            style={{
+              fontFamily: 'var(--font-family-serif)',
+              background: 'rgba(240, 219, 184, 0.45)',
+              border: '1px solid rgba(139, 94, 0, 0.08)',
+            }}
+          >
+            🗑️ 重置数据
+          </button>
+        )}
       </div>
 
       <div
