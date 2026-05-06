@@ -17,6 +17,7 @@ import { RelationType as RT } from './types';
 import { charactersToNodes, relationsToEdges, filterBySearch } from './utils/graphTransform';
 import { useForceLayout } from './hooks/useForceLayout';
 import { usePersistedGraph } from './hooks/usePersistedGraph';
+import { useCloudSync } from './hooks/useCloudSync';
 import { demoCharacters, demoRelations } from './data';
 import MartialCharacterNode from './components/nodes/MartialCharacterNode';
 import { MasterApprenticeEdge, ChivalrousEdge, SwornBrotherEdge } from './components/edges';
@@ -35,13 +36,14 @@ const edgeTypes: EdgeTypes = {
   swornBrother: SwornBrotherEdge,
 };
 
-function PasswordModal({ onConfirm }: { onConfirm: (success: boolean) => void }) {
+function PasswordModal({ onConfirm, action }: { onConfirm: (success: boolean) => void; action: 'add' | 'reset' }) {
   const [password, setPassword] = useState('');
   const [error, setError] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (password === '4231') {
+    const correctPassword = action === 'reset' ? 'qietingfengyu' : '4231';
+    if (password === correctPassword) {
       onConfirm(true);
     } else {
       setError(true);
@@ -72,7 +74,7 @@ function PasswordModal({ onConfirm }: { onConfirm: (success: boolean) => void })
             className="text-sm font-bold text-gold-dark tracking-wider"
             style={{ fontFamily: 'var(--font-family-brush)' }}
           >
-            🔒 管理认证
+            {action === 'reset' ? '⚠️ 危险操作' : '🔒 管理认证'}
           </span>
           <button
             onClick={() => onConfirm(false)}
@@ -84,7 +86,7 @@ function PasswordModal({ onConfirm }: { onConfirm: (success: boolean) => void })
         </div>
         <form onSubmit={handleSubmit} className="p-4 flex flex-col gap-3">
           <div className="text-[11px] text-ink-muted text-center font-medium">
-            请输入管理密码以添加角色
+            {action === 'reset' ? '输入管理密码以确认重置所有数据' : '请输入管理密码以添加角色'}
           </div>
           <input
             type="password"
@@ -110,12 +112,12 @@ function PasswordModal({ onConfirm }: { onConfirm: (success: boolean) => void })
             className="w-full px-3 py-2 rounded-md text-xs font-bold
                        transition-all duration-150 hover:shadow-md"
             style={{
-              background: 'rgba(107, 79, 29, 0.85)',
+              background: action === 'reset' ? 'rgba(183, 28, 28, 0.85)' : 'rgba(107, 79, 29, 0.85)',
               color: '#fef3dc',
               border: 'none',
             }}
           >
-            确认
+            {action === 'reset' ? '确认重置' : '确认'}
           </button>
         </form>
       </div>
@@ -140,6 +142,16 @@ function WuxiaGraph() {
     resetToDemo,
   } = usePersistedGraph();
 
+  const {
+    syncStatus,
+    syncMessage,
+    isCloudConnected,
+    saveToCloud,
+    loadFromCloud,
+    saveConfig,
+    clearConfig,
+  } = useCloudSync();
+
   const [selectedCharacter, setSelectedCharacter] = useState<Character | null>(null);
   const [showAddCharacter, setShowAddCharacter] = useState(false);
   const [showAddRelation, setShowAddRelation] = useState(false);
@@ -147,6 +159,7 @@ function WuxiaGraph() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [soloRelationType, setSoloRelationType] = useState<RelationType | null>(null);
+  const [passwordAction, setPasswordAction] = useState<'add' | 'reset' | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const closeAllPanels = useCallback(() => {
@@ -464,14 +477,41 @@ function WuxiaGraph() {
   );
 
   const handleResetData = useCallback(() => {
-    if (confirm('确定要重置为空白吗？所有数据将丢失。')) {
-      resetToDemo();
+    setPasswordAction('reset');
+    setShowPasswordModal(true);
+  }, []);
+
+  const handlePasswordConfirm = useCallback((ok: boolean) => {
+    setShowPasswordModal(false);
+    if (ok) {
+      if (passwordAction === 'add') {
+        setIsAuthenticated(true);
+        setShowAddCharacter(true);
+      } else if (passwordAction === 'reset') {
+        resetToDemo();
+        setSelectedCharacter(null);
+        const newNodes = charactersToNodes(demoCharacters, demoRelations);
+        const newEdges = relationsToEdges(demoRelations);
+        reinitialize(newNodes, newEdges);
+      }
+    }
+    setPasswordAction(null);
+  }, [passwordAction, resetToDemo, reinitialize]);
+
+  const handleSyncToCloud = useCallback(async () => {
+    await saveToCloud(characters, relations);
+  }, [saveToCloud, characters, relations]);
+
+  const handleSyncFromCloud = useCallback(async () => {
+    const data = await loadFromCloud();
+    if (data) {
+      setBoth(data.characters, data.relations);
       setSelectedCharacter(null);
-      const newNodes = charactersToNodes(demoCharacters, demoRelations);
-      const newEdges = relationsToEdges(demoRelations);
+      const newNodes = charactersToNodes(data.characters, data.relations);
+      const newEdges = relationsToEdges(data.relations);
       reinitialize(newNodes, newEdges);
     }
-  }, [resetToDemo, reinitialize]);
+  }, [loadFromCloud, setBoth, reinitialize]);
 
   const miniMapNodeColor = useCallback(() => '#8b6914', []);
 
@@ -490,6 +530,7 @@ function WuxiaGraph() {
         onToggleRelationType={handleToggleRelationType}
         onAddCharacter={() => {
           if (!isAuthenticated) {
+            setPasswordAction('add');
             setShowPasswordModal(true);
           } else {
             setShowAddCharacter(true);
@@ -506,6 +547,11 @@ function WuxiaGraph() {
         pinnedCount={pinnedCount}
         isAuthenticated={isAuthenticated}
         characters={characters}
+        isCloudConnected={isCloudConnected}
+        syncStatus={syncStatus}
+        syncMessage={syncMessage}
+        onSyncToCloud={handleSyncToCloud}
+        onSyncFromCloud={handleSyncFromCloud}
       />
 
       {selectedCharacter && (
@@ -551,13 +597,7 @@ function WuxiaGraph() {
         </>
       )}
 
-      {showPasswordModal && <PasswordModal onConfirm={(ok) => {
-        setShowPasswordModal(false);
-        if (ok) {
-          setIsAuthenticated(true);
-          setShowAddCharacter(true);
-        }
-      }} />}
+      {showPasswordModal && <PasswordModal onConfirm={handlePasswordConfirm} action={passwordAction || 'add'} />}
 
       <ReactFlow
         nodes={displayNodes}

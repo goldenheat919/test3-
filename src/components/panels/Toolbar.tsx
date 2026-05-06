@@ -18,6 +18,11 @@ interface ToolbarProps {
   isAuthenticated: boolean;
   characters: Character[];
   isStatic?: boolean;
+  isCloudConnected?: boolean;
+  syncStatus?: 'idle' | 'saving' | 'loading' | 'success' | 'error';
+  syncMessage?: string;
+  onSyncToCloud?: () => Promise<void>;
+  onSyncFromCloud?: () => Promise<void>;
 }
 
 const Toolbar = memo(function Toolbar({
@@ -37,6 +42,11 @@ const Toolbar = memo(function Toolbar({
   isAuthenticated,
   characters,
   isStatic,
+  isCloudConnected,
+  syncStatus = 'idle',
+  syncMessage = '',
+  onSyncToCloud,
+  onSyncFromCloud,
 }: ToolbarProps) {
   const [showSearch, setShowSearch] = useState(false);
 
@@ -253,6 +263,50 @@ const Toolbar = memo(function Toolbar({
         >
           💾 导出数据
         </button>
+        {onSyncToCloud && (
+          <>
+            <button
+              onClick={onSyncToCloud}
+              disabled={syncStatus === 'saving' || syncStatus === 'loading'}
+              className="px-4 py-2.5 rounded-md text-[12px] font-bold tracking-wide text-center
+                         transition-all duration-150 hover:shadow-md disabled:opacity-50"
+              style={{
+                fontFamily: 'var(--font-family-serif)',
+                color: '#1565c0',
+                background: 'rgba(21, 101, 192, 0.06)',
+                border: '1px solid rgba(21, 101, 192, 0.18)',
+                boxShadow: '0 1px 6px rgba(26, 14, 8, 0.06)',
+              }}
+            >
+              {syncStatus === 'saving' ? '⏳ 同步中...' : '☁️ 上传云端'}
+            </button>
+            <button
+              onClick={onSyncFromCloud}
+              disabled={syncStatus === 'saving' || syncStatus === 'loading'}
+              className="px-4 py-2.5 rounded-md text-[12px] font-bold tracking-wide text-center
+                         transition-all duration-150 hover:shadow-md disabled:opacity-50"
+              style={{
+                fontFamily: 'var(--font-family-serif)',
+                color: '#2e7d32',
+                background: 'rgba(46, 125, 50, 0.06)',
+                border: '1px solid rgba(46, 125, 50, 0.18)',
+                boxShadow: '0 1px 6px rgba(26, 14, 8, 0.06)',
+              }}
+            >
+              {syncStatus === 'loading' ? '⏳ 加载中...' : '📥 拉取云端'}
+            </button>
+          </>
+        )}
+        {(syncStatus === 'success' || syncStatus === 'error') && (
+          <div
+            className={`text-[10px] px-3 py-1.5 rounded-md text-center animate-fade-in ${
+              syncStatus === 'success' ? 'text-green-700 bg-green-50' : 'text-red-700 bg-red-50'
+            }`}
+            style={{ fontFamily: 'var(--font-family-serif)' }}
+          >
+            {syncMessage}
+          </div>
+        )}
         <button
           onClick={onAddRelation}
           className="px-4 py-2.5 rounded-md text-[12px] font-bold tracking-wide text-center
