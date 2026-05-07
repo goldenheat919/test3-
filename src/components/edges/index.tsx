@@ -15,7 +15,8 @@ function computeCurvedPath(
   edgeIndex: number,
   totalEdges: number
 ) {
-  const offset = edgeIndex - (totalEdges - 1) / 2;
+  const isSingleEdge = totalEdges <= 1;
+  const offset = isSingleEdge ? 0 : edgeIndex - (totalEdges - 1) / 2;
   const midX = (sourceX + targetX) / 2;
   const midY = (sourceY + targetY) / 2;
   const dx = targetX - sourceX;
@@ -23,7 +24,15 @@ function computeCurvedPath(
   const len = Math.sqrt(dx * dx + dy * dy) || 1;
   const nx = -dy / len;
   const ny = dx / len;
-  const offsetX = offset * 30;
+
+  let offsetX: number;
+  if (isSingleEdge) {
+    const perpDist = Math.min(len * 0.15, 35);
+    offsetX = Math.abs(dy) > Math.abs(dx) ? (dy > 0 ? perpDist : -perpDist) : (dx > 0 ? -perpDist : perpDist);
+  } else {
+    offsetX = offset * 30;
+  }
+
   const ctrlX = midX + nx * offsetX;
   const ctrlY = midY + ny * offsetX;
   return `M ${sourceX} ${sourceY} Q ${ctrlX} ${ctrlY} ${targetX} ${targetY}`;
@@ -39,7 +48,7 @@ function BaseWuxiaEdge(
 
   const pathD = totalEdges > 1
     ? computeCurvedPath(sourceX, sourceY, targetX, targetY, edgeIndex, totalEdges)
-    : `M ${sourceX} ${sourceY} L ${targetX} ${targetY}`;
+    : computeCurvedPath(sourceX, sourceY, targetX, targetY, 0, 1);
 
   const normalWidth = styleOptions.strokeWidth?.normal ?? 2;
   const selectedWidth = styleOptions.strokeWidth?.selected ?? 3;

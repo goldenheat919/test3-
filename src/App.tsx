@@ -196,10 +196,10 @@ function WuxiaGraph() {
     removeNodeFromSim,
     removeEdgeFromSim,
   } = useForceLayout(initialNodes, initialEdges, {
-    strength: 0.12,
-    distance: 160,
-    chargeStrength: -500,
-    collideRadius: 80,
+    strength: 0.08,
+    distance: 240,
+    chargeStrength: -800,
+    collideRadius: 110,
   });
 
   const pinnedCount = useMemo(
